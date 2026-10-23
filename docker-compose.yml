@@ -1,0 +1,37 @@
+﻿# ── CollabSphere Docker Compose ───────────────────────────────────────────────
+# Usage:
+#   cp backend/.env.example backend/.env   # fill in real values
+#   docker compose up --build
+#
+# CollabSphere uses MongoDB Atlas (SaaS). No local MongoDB container is included.
+# The MONGODB_URI variable must point to your Atlas cluster.
+#
+# Do NOT commit backend/.env – it is git-ignored.
+
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: collabsphere:latest
+    container_name: collabsphere_api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-5000}:5000"
+    environment:
+      NODE_ENV: production
+      PORT: "${PORT:-5000}"
+      MONGODB_URI: "${MONGODB_URI}"
+      JWT_SECRET: "${JWT_SECRET}"
+      CLIENT_URL: "${CLIENT_URL:-http://localhost:5000}"
+      SERVE_STATIC: "true"
+    env_file:
+      - ./backend/.env
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/api/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s

@@ -1,0 +1,34 @@
+# Dependencies and caches
+node_modules
+**/node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files – never bake secrets into image
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Build artifacts
+frontend/dist
+dist
+
+# Test suites and test caches
+backend/tests
+coverage
+.nyc_output
+
+# Git, IDE, and OS metadata
+.git
+.github
+.vscode
+.idea
+*.DS_Store
+Thumbs.db
+
+# Documentation
+docs/

@@ -1,0 +1,26 @@
+﻿# Dependencies and build artifacts
+node_modules
+npm-debug.log*
+
+# Environment files – never bake secrets into the image
+.env
+.env.*
+!.env.example
+
+# Development and test files
+tests/
+*.test.js
+*.spec.js
+vitest.config.*
+
+# Git and editor metadata
+.git
+.gitignore
+.gitattributes
+.vscode
+.idea
+*.DS_Store
+
+# Documentation
+README.md
+docs/
