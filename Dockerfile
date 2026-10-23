@@ -1,4 +1,4 @@
-﻿# ── CollabSphere – Full-Stack Dockerfile (root) ───────────────────────────────
+# ── CollabSphere – Full-Stack Dockerfile (root) ───────────────────────────────
 # Stage 1 – Build the Vite frontend
 # Stage 2 – Install backend production dependencies
 # Stage 3 – Runtime: Express serves API + static Vite assets
@@ -8,7 +8,7 @@
 # All environment variables are injected at runtime – do NOT bake .env files.
 
 # ── Stage 1: Frontend build ───────────────────────────────────────────────────
-FROM node:20.17.0-alpine AS frontend-builder
+FROM node:20.19.0-alpine AS frontend-builder
 
 WORKDIR /app/frontend
 
@@ -19,7 +19,7 @@ COPY frontend/ .
 RUN npm run build
 
 # ── Stage 2: Backend dependencies ────────────────────────────────────────────
-FROM node:20.17.0-alpine AS backend-deps
+FROM node:20.19.0-alpine AS backend-deps
 
 WORKDIR /app/backend
 
@@ -27,7 +27,7 @@ COPY backend/package.json backend/package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
 # ── Stage 3: Runtime ─────────────────────────────────────────────────────────
-FROM node:20.17.0-alpine AS runner
+FROM node:20.19.0-alpine AS runner
 
 RUN apk add --no-cache dumb-init
 

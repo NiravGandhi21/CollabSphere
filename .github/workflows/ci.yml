@@ -7,19 +7,27 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     env:
-      NODE_VERSION: 20.17.0
+      NODE_VERSION: 20.19.0
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Verify no secret .env files are tracked
+        run: |
+          if git ls-files | grep -E '^\.env$|/\.env$' | grep -v '\.env\.example$'; then
+            echo "::error::Found committed .env file in repository! Aborting build."
+            exit 1
+          else
+            echo "✅ No sensitive .env files tracked in Git."
+          fi
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
 
       # Backend ------------------------------------------------------
       - name: Install backend dependencies
@@ -40,14 +48,18 @@ jobs:
       - name: Run frontend lint (if present)
         working-directory: ./frontend
         run: |
-          if [ -f "package.json" ] && npm run | grep -q lint; then npm run lint; else echo "No lint script defined"; fi
+          if npm run | grep -q ' lint'; then npm run lint; else echo "No lint script defined in frontend/package.json"; fi
 
       - name: Build frontend production assets
         working-directory: ./frontend
         run: npm run build
 
       # Docker --------------------------------------------------------
-      - name: Build Docker image
+      - name: Validate Docker Compose specification
+        run: |
+          docker compose config
+
+      - name: Build full-stack Docker image
         run: |
           docker build -t collabsphere:latest .
 

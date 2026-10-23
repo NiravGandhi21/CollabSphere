@@ -1,4 +1,4 @@
-﻿# ── CollabSphere Backend – Dockerfile ─────────────────────────────────────────
+# ── CollabSphere Backend – Dockerfile ─────────────────────────────────────────
 # Multi-stage build: only production dependencies are copied to the final image.
 # Runs as non-root user (node) for security.
 # Expects all required environment variables to be injected at runtime via
@@ -6,7 +6,7 @@
 # DO NOT bake .env files or secrets into this image.
 
 # ── Stage 1: dependency installer ────────────────────────────────────────────
-FROM node:20.17.0-alpine AS deps
+FROM node:20.19.0-alpine AS deps
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
 # ── Stage 2: final runtime image ─────────────────────────────────────────────
-FROM node:20.17.0-alpine AS runner
+FROM node:20.19.0-alpine AS runner
 
 # Install dumb-init for proper signal forwarding (graceful shutdown)
 RUN apk add --no-cache dumb-init
