@@ -24,6 +24,10 @@ jobs:
             echo "✅ No sensitive .env files tracked in Git."
           fi
 
+      - name: Prepare safe CI environment files from template
+        run: |
+          cp backend/.env.example backend/.env
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -38,6 +42,10 @@ jobs:
         working-directory: ./backend
         env:
           NODE_ENV: test
+          PORT: 5001
+          JWT_SECRET: test_ci_jwt_secret_collabsphere_12345
+          CLIENT_URL: http://localhost:5173
+          MONGODB_URI: mongodb://localhost:27017/test
         run: npm test
 
       # Frontend -----------------------------------------------------

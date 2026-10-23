@@ -35,9 +35,16 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 // ── Environment validation ────────────────────────────────────────────────────────
+if (process.env.NODE_ENV === 'test') {
+  process.env.PORT = process.env.PORT || '5001';
+  process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_jwt_secret_collabsphere_12345';
+  process.env.CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+  process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/test';
+}
+
 const requiredEnv = ['PORT', 'MONGODB_URI', 'JWT_SECRET', 'CLIENT_URL'];
 const missing = requiredEnv.filter((key) => !process.env[key]);
-if (missing.length) {
+if (missing.length && process.env.NODE_ENV !== 'test') {
   console.error('❌ Missing required environment variables:', missing.join(', '));
   process.exit(1);
 }
